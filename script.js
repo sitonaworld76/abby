@@ -1,5 +1,5 @@
 // 1. Get a free access key at web3forms.com (just enter your email). Paste it here.
-const EMAIL_KEY = "98028144-d23c-4e4f-b2f3-0f1e867a3999";
+const EMAIL_KEY = "a3052bc4-2d64-4023-a58c-14e9df4d884d";
 // 2. Backup: your WhatsApp number, country code first, no + or spaces (e.g. 447123456789)
 const MY_NUMBER = "447XXXXXXXXX";
 
