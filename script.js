@@ -70,6 +70,7 @@ document.getElementById("form").addEventListener("submit", async e => {
     msg.textContent = "Locked in! Can't wait to see you in it, birthday girl ✨";
     msg.className = "msg ok";
   } catch (err) {
+    console.error("Email failed:", err);
     msg.textContent = "Opening WhatsApp instead... just hit send ♥";
     msg.className = "msg ok";
     openWhatsApp();
