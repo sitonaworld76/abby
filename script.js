@@ -1,7 +1,5 @@
-// 1. Get a free access key at web3forms.com (just enter your email). Paste it here.
+// Web3Forms access key (sends the pick to your email)
 const EMAIL_KEY = "a3052bc4-2d64-4023-a58c-14e9df4d884d";
-// 2. Backup: your WhatsApp number, country code first, no + or spaces (e.g. 447123456789)
-const MY_NUMBER = "447766746105";
 
 const cards = document.querySelectorAll(".dress");
 const size = document.getElementById("size");
@@ -10,6 +8,7 @@ const send = document.getElementById("send");
 const chosen = document.getElementById("chosen");
 const msg = document.getElementById("msg");
 let pick = null;
+let sent = false;
 
 function update() {
   cards.forEach(c => c.setAttribute("aria-pressed", c === pick ? "true" : "false"));
@@ -25,31 +24,24 @@ function update() {
 cards.forEach(card => {
   card.addEventListener("click", () => {
     pick = card;
-    msg.textContent = "";
+    if (!sent) msg.textContent = "";
     update();
   });
 });
 size.addEventListener("change", update);
-
-function summary() {
-  let text = "Abby picked the " + pick.dataset.colour + " " + pick.dataset.name + ", size " + size.value + ".";
-  if (note.value.trim()) text += "\n\nHer note: " + note.value.trim();
-  return text;
-}
-
-function openWhatsApp() {
-  const text = "Hey! I picked the " + pick.dataset.colour + " " + pick.dataset.name + ", size " + size.value + " ✨" +
-    (note.value.trim() ? "\n\n" + note.value.trim() : "");
-  window.location.href = "https://wa.me/" + MY_NUMBER + "?text=" + encodeURIComponent(text);
-}
 
 document.getElementById("form").addEventListener("submit", async e => {
   e.preventDefault();
   if (!pick || !size.value) return;
 
   send.disabled = true;
+  send.textContent = "Sending...";
   msg.className = "msg";
-  msg.textContent = "Sending...";
+  msg.textContent = "";
+
+  const dress = pick.dataset.colour + " " + pick.dataset.name;
+  let text = "Abby picked the " + dress + ", size " + size.value + ".";
+  if (note.value.trim()) text += "\n\nHer note: " + note.value.trim();
 
   try {
     const res = await fetch("https://api.web3forms.com/submit", {
@@ -59,21 +51,23 @@ document.getElementById("form").addEventListener("submit", async e => {
         access_key: EMAIL_KEY,
         subject: "Abby picked her birthday dress! 🎂",
         from_name: "For Abby",
-        dress: pick.dataset.colour + " " + pick.dataset.name,
+        dress: dress,
         size: size.value,
-        message: summary()
+        message: text
       })
     });
     const data = await res.json();
-    if (!data.success) throw new Error(data.message);
+    if (!data.success) throw new Error(data.message || "Status " + res.status);
 
+    sent = true;
+    send.textContent = "Locked in ♥";
     msg.textContent = "Locked in! Can't wait to see you in it, birthday girl ✨";
     msg.className = "msg ok";
+    return;
   } catch (err) {
     console.error("Email failed:", err);
-    msg.textContent = "Opening WhatsApp instead... just hit send ♥";
-    msg.className = "msg ok";
-    openWhatsApp();
+    send.textContent = "Try again ♥";
+    msg.textContent = "Hmm, that didn't go through. Check your signal and tap Try again. (" + err.message + ")";
   }
   send.disabled = false;
 });
