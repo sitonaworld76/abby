@@ -62,7 +62,7 @@ document.getElementById("form").addEventListener("submit", async e => {
 
     sent = true;
     send.textContent = "Locked in ♥";
-    msg.textContent = "Locked in! Can't wait to see you in it, birthday girl ✨";
+    msg.textContent = "Locked in! Can't wait to see you in it!";
     msg.className = "msg ok";
     return;
   } catch (err) {
