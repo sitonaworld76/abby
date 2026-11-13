@@ -39,11 +39,12 @@ document.getElementById("form").addEventListener("submit", async e => {
   msg.className = "msg";
   msg.textContent = "";
 
-  const dress = pick.dataset.colour + " " + pick.dataset.name;
-  let text = "Abby picked the " + dress + ", size " + size.value + ".";
-  if (note.value.trim()) text += "\n\nHer note: " + note.value.trim();
-
   try {
+    const dress = pick.dataset.colour + " " + pick.dataset.name;
+    const noteText = note ? note.value.trim() : "";
+    let text = "Abby picked the " + dress + ", size " + size.value + ".";
+    if (noteText) text += "\n\nHer note: " + noteText;
+
     const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
